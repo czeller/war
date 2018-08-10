@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<div id="app">
+	<div id="output"></div>
+
+	<div class="player">
+		Player 1 <button type="button" onclick="playCard(1)">Play</button>
+		<div id="player1"></div>
+	</div>
+
+	<div class="player">
+		Player 2<button type="button" onclick="playCard(2)">Play</button>
+		<div id="player2"></div>
+	</div>
+
+	<div class="playing-table">
+		<div class="cards" id="warcard-player1"></div>
+		<div class="cards" id="warcard-player2"></div>
+	</div>
+</div>
+
+<script src="/js/app.js"></script>
+
+</body>
+</html>

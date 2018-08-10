@@ -1,0 +1,25 @@
+html {
+	font-family: Arial;
+	background: green;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.player {
+	float:left;
+	width:200px;
+}
+
+.playing-table {
+	float:left;
+	width:400px;
+	border:1px solid blue;
+}
+
+.playing-table .cards {
+	float:left;
+	width:190px;
+	border:1px solid red;
+}
