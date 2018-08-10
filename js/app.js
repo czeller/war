@@ -1,3 +1,101 @@
+(function(){
+
+/***************************
+COMPONENTS
+***************************/
+
+Vue.component("card", {
+	template: `
+		<div class="card" style="position:absolute;">
+			<img v-bind:src="imgUrl" />
+		</div>
+	`,
+	computed: {
+		imgUrl: function() {
+			if (!this.revealed) return 'img/cardback.png';
+
+			var value = this.value == '10' ? '0' : this.value;
+			return 'https://deckofcardsapi.com/static/img/' + value + this.suit + '.png';
+		}
+	},
+	props: {
+		value: "",
+		suit: ""
+	},
+	data: function() {
+		return {
+			revealed: false
+		}
+	},
+	watch: {},
+	methods: {},
+	mounted: function() {
+
+	}
+});
+
+
+new Vue({
+	el: "#app",
+	data: {
+		deck: [],
+		player1: {
+			hand: [],
+			winPile: []
+		},
+		player2: {
+			hand: [],
+			winPile: []
+		}
+	},
+	methods: {
+		deal: function() {
+			this.deck = shuffle(this.deck);
+			// this.player1.hand = [];
+			// this.player2.hand = [];
+
+			var players = [
+				this.player1,
+				this.player2
+			];
+
+			while (this.deck.length > 0) {
+				var card = this.deck.pop();
+				this.player1.hand.push(card);
+
+				card = this.deck.pop();
+				this.player2.hand.push(card);
+			}
+		}
+	},
+	mounted: function() {
+		var values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+		var suits = ['H','D','S','C'];
+		for( var s = 0; s < suits.length; s++ ) {
+	      for( var n = 0; n < values.length; n++ ) {
+          this.deck.push({
+						value: values[n],
+						suit: suits[s]
+					})
+	      }
+	  }
+	}
+})
+
+function shuffle(cards) {
+	var j, x, i;
+	for (i = cards.length - 1; i > 0; i--) {
+			j = Math.floor(Math.random() * (i + 1));
+			x = cards[i];
+			cards[i] = cards[j];
+			cards[j] = x;
+	}
+
+	return cards;
+}
+
+})()
+
 /*
 USE VUE
 USE VUEX
@@ -136,10 +234,11 @@ function playHand() {
 SETUP
 ***************************/
 
-
+/*
 player1 = new Player(1);
 player2 = new Player(2); //todo: distinguish between human and computer
 players = [player1, player2]
 
 deck = new Deck();
 deck.deal(players);
+*/
