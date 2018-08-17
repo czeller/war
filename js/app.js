@@ -20,15 +20,22 @@ Vue.component("card", {
 	},
 	props: {
 		value: "",
-		suit: ""
-	},
-	data: function() {
-		return {
-			revealed: false
+		suit: "",
+		revealed: {
+			default: false
 		}
 	},
+	// data: function() {
+	// 	return {
+	// 		revealed: false
+	// 	}
+	// },
 	watch: {},
-	methods: {},
+	methods: {
+		setRevealed(revealed) {
+			this.revealed = revealed;
+		}
+	},
 	mounted: function() {
 
 	}
@@ -38,17 +45,49 @@ Vue.component("card", {
 new Vue({
 	el: "#app",
 	data: {
+		deckLoaded: false,
 		deck: [],
 		player1: {
 			hand: [],
-			winPile: []
+			winPile: [],
+			playedCards: []
 		},
 		player2: {
 			hand: [],
-			winPile: []
+			winPile: [],
+			playedCards: []
+		}
+	},
+	computed: {
+		gameState: function() {
+			if ( this.deck.length ) return 'deal';
+			// if ( this.deck.length ) return "deal";
+			// deal (deck not empty)
+			// shuffle cpu cards
+			// shuffle player card
+			// cpu play card
+			// prompt player to play card
+			// war??
+			// determine round winner
+			// determine game winner
+		}
+	},
+	watch: {
+		gameState: function(value) {
+			if (value === 'deal') {
+				this.deal();
+			}
 		}
 	},
 	methods: {
+		playCard: function() {
+			//if gamestate is "player1PlayCard"
+			var card = this.player1.hand.pop();
+			this.player1.playedCards.push(card);
+			//cpu plays top card
+			//player prompted to play card
+
+		},
 		deal: function() {
 			this.deck = shuffle(this.deck);
 			// this.player1.hand = [];
@@ -79,6 +118,10 @@ new Vue({
 					})
 	      }
 	  }
+
+		// this.deckLoaded = true;
+		// console.log("gameState", this.gameState);
+		// this.deal(); //auto-deal
 	}
 })
 
