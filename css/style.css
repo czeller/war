@@ -7,19 +7,21 @@ html {
 	box-sizing: border-box;
 }
 
+.cards {
+	position:relative;
+	width:225px;
+}
+
+.card {
+	position:absolute;
+	width:225px;
+}
+
 .player {
-	float:left;
-	width:400px;
+	width:100%;
 }
 
 .playing-table {
-	float:left;
-	width:400px;
+	width:100%;
 	border:1px solid blue;
-}
-
-.playing-table .cards {
-	float:left;
-	width:190px;
-	border:1px solid red;
 }

@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div id="app">
+<div id="app" style="display:flex;">
 	<button v-on:click="deal" v-if="this.deck.length > 0">Deal</button>
 
 	<div class="player">
@@ -31,13 +31,19 @@
 		</div>
 	</div>
 
-	<div class="playing-table">
-		<div class="cards" id="warcard-player1">
-			<card v-for="card in player1.playedCards" v-bind:suit="card.suit" v-bind:value="card.value" v-bind:revealed=true></card>
+	<div class="playing-table" style="display:flex;">
+		<div id="warcard-player1">
+			You
+			<div class="cards">
+				<card v-for="card in warZone.player1" v-bind:suit="card.suit" v-bind:value="card.value" v-bind:revealed=true></card>
+			</div>
 		</div>
 
-		<div class="cards" id="warcard-player2">
-			<card v-for="card in player2.playedCards" v-bind:suit="card.suit" v-bind:value="card.value" v-bind:revealed=true></card>
+		<div id="warcard-player2">
+			CPU
+			<div class="cards">
+				<card v-for="card in  warZone.player2" v-bind:suit="card.suit" v-bind:value="card.value" v-bind:revealed=true></card>
+			</div>
 		</div>
 	</div>
 

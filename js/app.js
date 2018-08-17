@@ -6,7 +6,7 @@ COMPONENTS
 
 Vue.component("card", {
 	template: `
-		<div class="card" style="position:absolute;">
+		<div class="card">
 			<img v-bind:src="imgUrl" />
 		</div>
 	`,
@@ -49,20 +49,23 @@ new Vue({
 		deck: [],
 		player1: {
 			hand: [],
-			winPile: [],
-			playedCards: []
+			winPile: []
 		},
 		player2: {
 			hand: [],
-			winPile: [],
-			playedCards: []
+			winPile: []
+		},
+		warZone: {
+			player1: [],
+			player2: []
 		}
 	},
 	computed: {
 		gameState: function() {
-			if ( this.deck.length ) return 'deal';
-			// if ( this.deck.length ) return "deal";
-			// deal (deck not empty)
+			if ( this.deck.length ) return 'deal';		//do we need to make sure we're not doing something else?
+			// if ( this.player1.playedCards.length === 0 && this.player2.playedCards.length === 0 ) return 'playRound';
+			if ( this.warZone.player2.length === 0 || this.warZone.player1.length === 0 ) return 'playCards';
+			if ( this.warZone.player2.length === this.warZone.player1.length ) return 'determineWinner';
 			// shuffle cpu cards
 			// shuffle player card
 			// cpu play card
@@ -70,23 +73,47 @@ new Vue({
 			// war??
 			// determine round winner
 			// determine game winner
+
+			return;
+		},
+		nextAction: function() {
+			//Deal
+			//player 1 play
 		}
 	},
 	watch: {
 		gameState: function(value) {
-			if (value === 'deal') {
+			console.log("gameState", value);
+			if ( value === 'deal' ) {
 				this.deal();
+			}
+			else if ( value === 'playCards' ) {
+				this.playCard('player2');
+				console.log("player1 play card....");
+				//todo: tell user to click their deck to play a card
+			}
+			else if ( value === 'determineWinner' ) {
+				var player1Card = this.warZone.player1[this.warZone.player1.length-1];
+				var player2Card = this.warZone.player2[this.warZone.player2.length-1];
+				
+				if ( player1Card.value === player2Card.value ) {
+					alert("war"); //todo
+				}
+				else if ( player1Card.value > player2Card.value ) {
+					alert("You win!");
+				}
+				else {
+					alert("CPU wins");
+				}
 			}
 		}
 	},
 	methods: {
-		playCard: function() {
-			//if gamestate is "player1PlayCard"
-			var card = this.player1.hand.pop();
-			this.player1.playedCards.push(card);
-			//cpu plays top card
-			//player prompted to play card
-
+		playCard: function(player) {
+			// if ( this.gameState != player + 'PlayCard') return;
+			//debugger;
+			var card = this[player].hand.pop();
+			this.warZone[player].push(card);
 		},
 		deal: function() {
 			this.deck = shuffle(this.deck);
