@@ -1,7 +1,10 @@
 (function() {
 
-const cardValues = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-const cardSuits = ['H','D','S','C'];
+// const cardValues = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+// const cardSuits = ['H','D','S','C'];
+
+const cardValues = ['2', '3', '4'];
+const cardSuits = ['H','D'];
 
 /***************************
 COMPONENTS
@@ -59,7 +62,13 @@ Vue.component("player", {
 		</div>
 	</div>`,
 	props: ["name","hand","winPile"],
-	watch: {},
+	watch: {
+		hand: function() {
+			if ( this.hand.length === 0 ) {
+				this.$emit("player-hand-empty");
+			}
+		}
+	},
 	computed: {
 
 	},
@@ -94,7 +103,7 @@ new Vue({
 			if ( this.deck.length ) return 'deal';		//do we need to make sure we're not doing something else?
 			// if ( this.player1.playedCards.length === 0 && this.player2.playedCards.length === 0 ) return 'playRound';
 			if ( this.warZone.player2.length === 0 || this.warZone.player1.length === 0 ) return 'playCards';
-			if ( this.warZone.player2.length === this.warZone.player1.length ) return 'determineWinner';
+			if ( this.warZone.player2.length === this.warZone.player1.length ) return 'determineRoundWinner';
 			// shuffle cpu cards
 			// shuffle player card
 			// cpu play card
@@ -120,16 +129,19 @@ new Vue({
 				console.log("player1 play card....");
 				//todo: tell user to click their deck to play a card
 			}
-			else if ( value === 'determineWinner' ) {
+			else if ( value === 'determineRoundWinner' ) {
 				var _self = this;
 				setTimeout(function() {
-					_self.determineWinner();
+					_self.determineRoundWinner();
 				}, 500);
 			}
 		}
 	},
 	methods: {
-		determineWinner: function() {
+		examinePlayerHand: function(player) {
+
+		},
+		determineRoundWinner: function() {
 			var player1Card = this.warZone.player1[this.warZone.player1.length-1];
 			var player2Card = this.warZone.player2[this.warZone.player2.length-1];
 
@@ -156,7 +168,7 @@ new Vue({
 				this[player].winPile.push(card);
 			}
 		},
-		playCard: function(player) {
+		playCard: function(player) {			
 			// if ( this.gameState != player + 'PlayCard') return;
 			var card = this[player].hand.pop();
 			card.revealed = true;

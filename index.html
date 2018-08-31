@@ -9,8 +9,8 @@
 <div id="app" style="display:flex;">
 	<button v-on:click="deal" v-if="this.deck.length > 0">Deal</button>
 
-	<player v-bind="player1" v-on:player-clicked-card="playCard('player1')"></player>
-	<player v-bind="player2"></player>
+	<player v-bind="player1" v-on:player-clicked-card="playCard('player1')" v-on:player-hand-empty="examinePlayerHand('player1')"></player>
+	<player v-bind="player2" v-on:player-hand-empty="examinePlayerHand('player2')"></player>
 
 	<div class="playing-table" style="display:flex;">
 		<div id="warcard-player1">
