@@ -1,26 +1,38 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
-</template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { mapStores } from 'pinia'
+import { wargameStore } from './store'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    WarGame: require("/src/components/WarGame").default,
+  },
+  computed: {
+    ...mapStores(wargameStore)
+  },
+  mounted() {
+    this.wargameStore.setPlayers(
+      [ //todo: let user define players
+        {
+          name: "Chris",
+          human: true
+        },
+        {
+          name: "Ryan",
+          human: true
+        }
+      ],
+    )
   }
 }
 </script>
 
+<template>
+  <div>
+    <WarGame v-if="wargameStore.players.length > 0"></WarGame>
+  </div>
+</template>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
