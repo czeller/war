@@ -19,7 +19,7 @@ export default {
         },
         {
           name: "Ryan",
-          human: true
+          human: true //todo: allow for CPU player?
         }
       ],
     )

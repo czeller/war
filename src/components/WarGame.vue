@@ -2,9 +2,6 @@
 import { mapStores } from 'pinia'
 import { wargameStore } from '/src/store'
 
-const cardValues = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-const cardSuits = ['H','D','S','C'];
-
 export default {
   components: {
     Player: require("/src/components/Player").default,
@@ -13,6 +10,9 @@ export default {
   },
   computed: {
     ...mapStores(wargameStore)
+
+    //todo: determine when game is over (show winner, summary, etc...)
+    //todo: start a new game after game is over
   },
   data() {
     return {
@@ -21,11 +21,11 @@ export default {
   },
 
   mounted() {
-    for(let s = 0; s < cardSuits.length; s++) {
-      for(let n = 0; n < cardValues.length; n++) {
+    for(let s = 0; s < this.wargameStore.cardSuits.length; s++) {
+      for(let n = 0; n < this.wargameStore.cardValues.length; n++) {
         this.deck.push({
-          value: cardValues[n],
-          suit: cardSuits[s]
+          value: this.wargameStore.cardValues[n],
+          suit: this.wargameStore.cardSuits[s]
         });
       }
     }
@@ -79,7 +79,6 @@ export default {
           :key="index"
           v-bind="{
             ...battle,
-            numberOfCardsRequired: index == 0 ? 1 : 2
           }"
         ></Battle>
       </div>
