@@ -6,30 +6,19 @@ export default {
   name: 'App',
   components: {
     WarGame: require("/src/components/WarGame").default,
+    NewGame: require("/src/components/NewGame").default,
   },
   computed: {
     ...mapStores(wargameStore)
   },
-  mounted() {
-    this.wargameStore.setPlayers(
-      [ //todo: let user define players
-        {
-          name: "Chris",
-          human: true
-        },
-        {
-          name: "Ryan",
-          human: true //todo: allow for CPU player?
-        }
-      ],
-    )
-  }
 }
 </script>
 
 <template>
   <div>
     <WarGame v-if="wargameStore.players.length > 0"></WarGame>
+
+    <NewGame v-show="wargameStore.players.length == 0"></NewGame>
   </div>
 </template>
 
