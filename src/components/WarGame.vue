@@ -9,15 +9,49 @@ export default {
     PlayingCard: require("/src/components/PlayingCard").default
   },
   computed: {
-    ...mapStores(wargameStore)
+    ...mapStores(wargameStore),
 
-    //todo: determine when game is over (show winner, summary, etc...)
-    //todo: start a new game after game is over
+    //determine when game is over
+    winningPlayer() {
+      let playersInGame = this.wargameStore.players.filter((p, i) => {
+        return this.wargameStore.losingPlayerIndexes.indexOf(i) == -1;
+      });
+
+      if (playersInGame.length == 1) {
+        return playersInGame[0];
+      }
+    }
   },
+  watch: {
+    "wargameStore.battles": {
+      deep: true,
+      handler() {
+        let currentBattle = this.wargameStore.battles[this.wargameStore.battles.length-1];
+
+        if (!currentBattle) {
+          return;
+        }
+
+        for (let i=0; i<currentBattle.players.length; i++) {
+          if (currentBattle.players[i].cards.length != currentBattle.numberOfCardsRequired) {
+            //if player has 0 cards, they lose
+            if (this.wargameStore.players[i].hand.length == 0) {
+              this.wargameStore.addLosingPlayer(i);
+            }
+          }
+        }
+      },
+    }
+  },
+
   data() {
     return {
       deck: []
     }
+  },
+
+  methods: {
+
   },
 
   mounted() {
@@ -31,7 +65,7 @@ export default {
     }
 
     //shuffle cards
-    this.deck.sort(() => .5 - Math.random());
+    this.deck.sort(() => Math.random() - .5);
 
     //deal cards
     let playerIndex = 0;
@@ -42,6 +76,7 @@ export default {
       }
     });
 
+    //todo: all players should have same number of cards
     while (this.deck.length > 0) {
       let card = this.deck.pop();
       players[playerIndex].hand.push(card);
@@ -62,7 +97,12 @@ export default {
 
 <template>
   <div>
-    <div style="display:grid; grid-template-columns:1fr 1fr">
+    <div v-if="winningPlayer">
+      WINNER IS {{winningPlayer.name}}!!
+
+      <button @click="wargameStore.resetGameState()">New Game!</button>
+    </div>
+    <div v-else style="display:grid; grid-template-columns:1fr 1fr">
       <div>
         <Player
           v-for="(player, index) in wargameStore.players"

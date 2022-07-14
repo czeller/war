@@ -18,6 +18,12 @@ export default {
 		}
 	},
 
+	data() {
+		return {
+			battleResults: ""
+		}
+	},
+
 	watch: {
 		readyToResolve() {
 			if (this.readyToResolve) {
@@ -30,9 +36,9 @@ export default {
 		...mapStores(wargameStore),
 
 		readyToResolve() {
-			//check if each player has played the required number of cards
+			//check if each player has played the required number of cards, excluding losers
 			for (let i=0; i<this.players.length; i++) {
-				if (this.players[i].cards.length != this.numberOfCardsRequired) {
+				if (this.players[i].cards.length != this.numberOfCardsRequired && this.wargameStore.losingPlayerIndexes.indexOf(i) == -1) {
 					return false;
 				}
 			}
@@ -43,11 +49,20 @@ export default {
 
 	methods: {
 		resolve() {
-			let players = this.players.map((p, i) => {
+			let players = this.players
+				.map((p, i) => {
 					return {
 						...p,
 						originalPlayerIndex: i,
-						score: this.wargameStore.cardValues.indexOf(p.cards[p.cards.length-1].value)
+					}
+				})
+				.filter(p => { //exclude losers
+					return this.wargameStore.losingPlayerIndexes.indexOf(p.originalPlayerIndex) == -1;
+				})
+				.map(p => {
+					return {
+						...p,
+						score: this.wargameStore.cardValues.indexOf(p.cards[p.cards.length-1].value),
 					}
 				})
 				.sort((a, b) => {
@@ -56,11 +71,15 @@ export default {
 
 			if (players[0].score != players[1].score) {
 				//we have a winner!
+				this.battleResults = "Player " + players[0].name + " won!"; //todo: show how many cards the player won?
 				this.wargameStore.endBattles(players[0].originalPlayerIndex);
 			}
 			else {
 				//tiebreaker
+				this.battleResults = "Tie breaker!";
 				this.wargameStore.addBattle();
+
+				//todo: 2 cpu players get stuck here
 			}
 		}
 	},
@@ -79,7 +98,7 @@ export default {
 <template>
 	<div>
 		<div>
-			Player X wins Y cards!
+			{{battleResults}}
 		</div>
 
 		<div v-for="(player, index) in players" :key="index">
@@ -94,11 +113,13 @@ export default {
 			</PlayingCard>
 
 			<!--
-			todo: layout for tiebreaker vs initial
-			put current battle at top
+			todo: layouts: initial, tiebreaker
+			separate current battle from previous (tiebreaker) battles
 			put tiebreaker cards side by side
 			only reveal the final card (e.g. in a tiebreaker, it's the 2nd card)
-			communicate results of each battle more clearly (slow down!)
+			communicate results of each battle more clearly
+			- slow down
+			- show player scores (number of cards and plus/minus)
 			 -->
 		</div>
 

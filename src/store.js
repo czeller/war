@@ -3,42 +3,60 @@ import { defineStore } from 'pinia'
 export const wargameStore = defineStore('wargame', {
   state: () => ({
     players: [],
+		losingPlayerIndexes: [],
 		battles: [], //current series of battles
 		cardValues: ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'],
 		cardSuits: ['H','D','S','C'],
   }),
   getters: {
+		currentBattle() {
+			let currentBattle = this.battles[this.battles.length-1];
 
+		}
   },
   actions: {
+		resetGameState() {
+			this.players = [];
+			this.losingPlayerIndexes = [];
+			this.battles = [];
+		},
+
 		setPlayers(players) {
 			this.players = players;
+		},
+
+		addLosingPlayer(index) {
+			if (this.losingPlayerIndexes.indexOf(index) == -1) {
+				this.losingPlayerIndexes.push(index);
+			}
 		},
 
 		playCardFromPlayerAtIndex(index) {
 			let currentBattle = this.battles[this.battles.length-1];
 
-			//todo: should we force a delay after each battle to show results? e.g. Player X won Y cards!
-
 			//validate card can be played
-			if (currentBattle.players[index].cards.length < currentBattle.numberOfCardsRequired) {
+			if (currentBattle && currentBattle.players[index].cards.length < currentBattle.numberOfCardsRequired) {
 				let card = this.players[index].hand.pop();
 				card && currentBattle.players[index].cards.push(card);
 			}
+
 		},
 
 		endBattles(winningPlayerIndex) { //todo: can this have a better name?
-			this.players[winningPlayerIndex].hand = this.players[winningPlayerIndex].hand.concat(
-				this.battles
+			setTimeout(() => {
+				this.players[winningPlayerIndex].hand = this.battles
 					.map(b => b.players)
 					.flat()
 					.map(p => p.cards)
-					.flat() //todo: this may not be necessary in the context of multiple battles
-			);
+					.flat()
+					.concat(
+						this.players[winningPlayerIndex].hand
+					);
 
-			//todo: consider packaging the calling of these two methods
-			this.resetBattles();
-			this.addBattle();
+				//todo: consider packaging the calling of these two methods
+				this.resetBattles();
+				this.addBattle();
+			}, 1000);
 		},
 
 		resetBattles() {
@@ -46,15 +64,17 @@ export const wargameStore = defineStore('wargame', {
 		},
 
 		addBattle() {
-			this.battles.push({
-				players: this.players.map(player => {
-					return {
-						...player,
-						cards: []
-					}
-				}),
-				numberOfCardsRequired: this.battles.length == 0 ? 1 : 2 //initial battle requires one card, tiebreakers require two cards
-			})
+			setTimeout(() => {
+				this.battles.push({
+					players: this.players.map(player => {
+						return {
+							...player,
+							cards: []
+						}
+					}),
+					numberOfCardsRequired: this.battles.length == 0 ? 1 : 2 //initial battle requires one card, tiebreakers require two cards
+				});
+			}, 1000);
 		}
   },
 })

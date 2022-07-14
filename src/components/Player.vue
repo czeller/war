@@ -6,9 +6,40 @@ export default {
 	components: {
     PlayingCard: require("./PlayingCard").default
   },
+
 	computed: {
-    ...mapStores(wargameStore)
+    ...mapStores(wargameStore),
+
+		//Playing as CPU...is there a current battle and has this player played the required number of cards?
+		readyToAutomaticallyPlayCard() {
+			if (this.human) {
+				return false;
+			}
+
+			let currentBattle = this.wargameStore.battles[this.wargameStore.battles.length-1]; //todo: move this logic to the store
+
+			if (!currentBattle) {
+				return false;
+			}
+
+			if (currentBattle.players[this.index].cards.length != currentBattle.numberofCardsRequired) {
+				return true;
+			}
+
+			return false;
+		}
   },
+
+	watch: {
+		readyToAutomaticallyPlayCard() {
+			if (this.readyToAutomaticallyPlayCard) {
+				setTimeout(() => {
+					this.playCard();
+				}, 200);
+			}
+		}
+	},
+
 	props: {
 		index: {
 			required: true,
@@ -28,11 +59,10 @@ export default {
 			},
 		}
 	},
+
 	methods: {
 		playCard() {
 			this.wargameStore.playCardFromPlayerAtIndex(this.index);
-			//get the card out of the players hand
-			//add the card to the battle for the player
 		}
 	}
 }
@@ -40,10 +70,10 @@ export default {
 
 <template>
 	<div class="player">
-		{{name}}
+		{{name}} readyToAutomaticallyPlayCard={{readyToAutomaticallyPlayCard}}
 		<div>
 			<div>Cards in Hand: {{hand.length}}</div>
-			<div class="cards" @click="playCard">
+			<div class="cards" @click="human && playCard()">
 				<PlayingCard
 					v-for="(card, index) in hand"
 					:key="index"
@@ -57,7 +87,7 @@ export default {
 <style scoped>
 .cards {
 	position: relative;
-	height: 314px; /* height of each card; todo: lose the height! */
+	height: 140px; /* height of each card; todo: lose the height! */
 }
 
 .card {

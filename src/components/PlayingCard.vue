@@ -29,6 +29,6 @@ export default {
 
 <template>
 	<div class="card">
-		<img v-bind:src="imgUrl" />
+		<img v-bind:src="imgUrl" style="max-width:100px;" />
 	</div>
 </template>
