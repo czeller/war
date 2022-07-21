@@ -102,8 +102,8 @@ export default {
 
       <button @click="wargameStore.resetGameState()">New Game!</button>
     </div>
-    <div v-else style="display:grid; grid-template-columns:1fr 1fr">
-      <div>
+    <div v-else>
+      <div style="display:flex; justify-content:space-between">
         <Player
           v-for="(player, index) in wargameStore.players"
           :key="index"
@@ -113,12 +113,11 @@ export default {
           }"
         ></Player>
       </div>
-      <div>
+      <div style="min-height:50vh; background-color:gray;">
         <Battle
-          v-for="(battle, index) in wargameStore.battles"
-          :key="index"
+          v-if="wargameStore.battles.length > 0"
           v-bind="{
-            ...battle,
+            ...wargameStore.battles[wargameStore.battles.length-1],
           }"
         ></Battle>
       </div>

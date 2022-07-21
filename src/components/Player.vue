@@ -7,39 +7,6 @@ export default {
     PlayingCard: require("./PlayingCard").default
   },
 
-	computed: {
-    ...mapStores(wargameStore),
-
-		//Playing as CPU...is there a current battle and has this player played the required number of cards?
-		readyToAutomaticallyPlayCard() {
-			if (this.human) {
-				return false;
-			}
-
-			let currentBattle = this.wargameStore.battles[this.wargameStore.battles.length-1]; //todo: move this logic to the store
-
-			if (!currentBattle) {
-				return false;
-			}
-
-			if (currentBattle.players[this.index].cards.length != currentBattle.numberofCardsRequired) {
-				return true;
-			}
-
-			return false;
-		}
-  },
-
-	watch: {
-		readyToAutomaticallyPlayCard() {
-			if (this.readyToAutomaticallyPlayCard) {
-				setTimeout(() => {
-					this.playCard();
-				}, 200);
-			}
-		}
-	},
-
 	props: {
 		index: {
 			required: true,
@@ -60,6 +27,40 @@ export default {
 		}
 	},
 
+	data() {
+		return {
+			playCardTimeout: undefined
+		}
+	},
+
+	computed: {
+    ...mapStores(wargameStore),
+  },
+
+	watch: {
+		"wargameStore.battles": {
+      deep: true,
+      handler() {
+				if (this.human) {
+					return;
+				}
+
+        let currentBattle = this.wargameStore.battles[this.wargameStore.battles.length-1];
+
+        if (!currentBattle) {
+          return;
+        }
+
+        if (currentBattle.players[this.index].cards.length != currentBattle.numberofCardsRequired) {
+					this.playCardTimeout = this.playCardTimeout || setTimeout(() => {
+						this.playCardTimeout = undefined; //prevent multiple cards being played at the same time
+						this.playCard();
+					}, 500);
+				}
+      },
+    }
+	},
+
 	methods: {
 		playCard() {
 			this.wargameStore.playCardFromPlayerAtIndex(this.index);
@@ -70,9 +71,9 @@ export default {
 
 <template>
 	<div class="player">
-		{{name}} readyToAutomaticallyPlayCard={{readyToAutomaticallyPlayCard}}
+		Player: {{name}}
 		<div>
-			<div>Cards in Hand: {{hand.length}}</div>
+			<div>Cards: {{hand.length}}</div>
 			<div class="cards" @click="human && playCard()">
 				<PlayingCard
 					v-for="(card, index) in hand"
@@ -88,6 +89,24 @@ export default {
 .cards {
 	position: relative;
 	height: 140px; /* height of each card; todo: lose the height! */
+	width: 120px; /* i.e. 100px card + 20px max fan out */
+}
+
+/* todo: can we dynamically add 5px to each card relative to the card before it? */
+.card+.card {
+	left:5px;
+}
+
+.card+.card+.card {
+	left:10px;
+}
+
+.card+.card+.card+.card {
+	left:15px;
+}
+
+.card+.card+.card+.card+.card {
+	left:20px;
 }
 
 .card {

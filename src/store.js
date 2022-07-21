@@ -74,7 +74,7 @@ export const wargameStore = defineStore('wargame', {
 					}),
 					numberOfCardsRequired: this.battles.length == 0 ? 1 : 2 //initial battle requires one card, tiebreakers require two cards
 				});
-			}, 1000);
+			}, 500);
 		}
   },
 })

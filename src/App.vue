@@ -11,6 +11,18 @@ export default {
   computed: {
     ...mapStores(wargameStore)
   },
+  mounted() {
+    //todo
+    this.wargameStore.setPlayers([{
+      name: "a",
+      human: true,
+    },
+    {
+      name: "b",
+      human: true,
+    }
+    ])
+  }
 }
 </script>
 

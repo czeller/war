@@ -25,9 +25,12 @@ export default {
 	},
 
 	watch: {
-		readyToResolve() {
-			if (this.readyToResolve) {
-				setTimeout(this.resolve, 100); //this is necessary for the DOM to finish
+		readyToResolve: {
+			immediate: true,
+			handler() {
+				if (this.readyToResolve) {
+					setTimeout(this.resolve, 100); //this is necessary for the DOM to finish
+				}
 			}
 		}
 	},
@@ -69,6 +72,7 @@ export default {
 					return b.score - a.score;
 				});
 
+			//todo: is a stalemate possible if you end with a tiebreaker?
 			if (players[0].score != players[1].score) {
 				//we have a winner!
 				this.battleResults = "Player " + players[0].name + " won!"; //todo: show how many cards the player won?
@@ -78,8 +82,6 @@ export default {
 				//tiebreaker
 				this.battleResults = "Tie breaker!";
 				this.wargameStore.addBattle();
-
-				//todo: 2 cpu players get stuck here
 			}
 		}
 	},
@@ -101,27 +103,74 @@ export default {
 			{{battleResults}}
 		</div>
 
-		<div v-for="(player, index) in players" :key="index">
-			{{player.name}} play {{numberOfCardsRequired - player.cards.length}} card(s)!
+		<div>
+			<div style="display:flex; justify-content:center;">
+				<div v-for="(player, index) in players" :key="index">
+					Player {{player.name}} play {{numberOfCardsRequired - player.cards.length}} card(s)!
 
-			<PlayingCard
-				v-for="(card) in player.cards"
-				:key="JSON.stringify(card)"
-				revealed="true"
-				v-bind="card"
-			>
-			</PlayingCard>
+					<!--todo: tie breakers need two "player-card" slots (this isn't right)-->
+					<div class="player-cards" v-for="cardIndex in numberOfCardsRequired" :key="cardIndex">
+						<PlayingCard
+							v-for="(card) in player.cards"
+							:key="JSON.stringify(card)"
+							revealed="true"
+							v-bind="card"
+						>
+						</PlayingCard>
+					</div>
+				</div>
+			</div>
 
-			<!--
-			todo: layouts: initial, tiebreaker
-			separate current battle from previous (tiebreaker) battles
-			put tiebreaker cards side by side
-			only reveal the final card (e.g. in a tiebreaker, it's the 2nd card)
-			communicate results of each battle more clearly
-			- slow down
-			- show player scores (number of cards and plus/minus)
-			 -->
+			<!--todo if current battle is a tiebreaker, show cards from previous battles separately-->
+			<template v-if="wargameStore.battles.length > 1">
+				PLAYED CARDS...
+				<div style="display:flex;">
+					<!--todo: maybe put this in a wargameStore.getBattleCards (see also endBattles())?-->
+					<div v-for="(card) in wargameStore.battles
+						.slice(0, -1)
+						.map(b => b.players)
+						.flat()
+						.map(p => p.cards)
+						.flat()"
+						:key="JSON.stringify(card)"
+						style="position:relative;"
+						>
+						<PlayingCard
+							revealed="true"
+							v-bind="card"
+							style="position:relative;"
+						>
+						</PlayingCard>
+					</div>
+				</div>
+			</template>
 		</div>
+
+		<!--
+		todo: layouts: initial, tiebreaker
+		separate current battle from previous (tiebreaker) battles
+		put tiebreaker cards side by side
+		only reveal the final card (e.g. in a tiebreaker, it's the 2nd card)
+		communicate results of each battle more clearly
+		- slow down
+		- show player scores (number of cards and plus/minus)
+			-->
 
 	</div>
 </template>
+
+<style scoped>
+.player-cards {
+	margin: 20px;
+	width: 100px; /* match card */
+	height: 140px; /* match card */
+	border: 1px dashed black;
+	text-align: center;
+	display: flex;
+	align-items: center;
+}
+
+.card {
+	position: absolute;
+}
+</style>
