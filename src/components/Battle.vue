@@ -74,7 +74,7 @@ export default {
 				});
 
 			//todo: is a stalemate possible if you end with a tiebreaker?
-			if (false && players[0].score != players[1].score) {
+			if (players[0].score != players[1].score) {
 				//we have a winner!
 				this.battleResults = "Player " + players[0].name + " won!"; //todo: show how many cards the player won?
 				this.wargameStore.endBattles(players[0].originalPlayerIndex);

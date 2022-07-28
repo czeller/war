@@ -5,6 +5,7 @@ import { wargameStore } from '/src/store'
 export default {
   components: {
     Player: require("/src/components/Player").default,
+    Winner: require("/src/components/Winner").default,
     Battle: require("/src/components/Battle").default,
     PlayingCard: require("/src/components/PlayingCard").default
   },
@@ -16,6 +17,8 @@ export default {
       let playersInGame = this.wargameStore.players.filter((p, i) => {
         return this.wargameStore.losingPlayerIndexes.indexOf(i) == -1;
       });
+
+      return playersInGame[0]; //todo
 
       if (playersInGame.length == 1) {
         return playersInGame[0];
@@ -98,9 +101,7 @@ export default {
 <template>
   <div>
     <div v-if="winningPlayer">
-      WINNER IS {{winningPlayer.name}}!!
-
-      <button @click="wargameStore.resetGameState()">New Game!</button>
+      <Winner :player="winningPlayer"></Winner>
     </div>
     <div v-else>
       <div style="display:flex; justify-content:space-between">
