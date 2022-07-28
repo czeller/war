@@ -4,7 +4,8 @@ import { wargameStore } from '/src/store'
 
 export default {
 	components: {
-    PlayingCard: require("./PlayingCard").default
+    PlayingCard: require("./PlayingCard").default,
+		BattlePlayedCards: require("./BattlePlayedCards").default,
   },
 
 	props: {
@@ -125,26 +126,7 @@ export default {
 			</div>
 
 			<template v-if="wargameStore.battles.length > 1">
-				PLAYED CARDS...
-				<div style="display:flex;">
-					<!--todo: maybe put this in a wargameStore.getBattleCards (see also endBattles())?-->
-					<div v-for="(card) in wargameStore.battles
-						.slice(0, -1)
-						.map(b => b.players)
-						.flat()
-						.map(p => p.cards)
-						.flat()"
-						:key="JSON.stringify(card)"
-						style="position:relative;"
-						>
-						<PlayingCard
-							revealed="true"
-							v-bind="card"
-							style="position:relative;"
-						>
-						</PlayingCard>
-					</div>
-				</div>
+				<BattlePlayedCards></BattlePlayedCards>
 			</template>
 		</div>
 
