@@ -108,12 +108,11 @@ export default {
 				<div v-for="(player, index) in players" :key="index">
 					Player {{player.name}} play {{numberOfCardsRequired - player.cards.length}} card(s)!
 
-					<!--todo: tie breakers need two "player-card" slots (this isn't right)-->
-					<div class="player-cards" v-for="cardIndex in numberOfCardsRequired" :key="cardIndex">
+					<div class="player-cards">
 						<PlayingCard
-							v-for="(card) in player.cards"
+							v-for="(card, cardIndex) in player.cards"
 							:key="JSON.stringify(card)"
-							revealed="true"
+							:revealed="cardIndex == numberOfCardsRequired-1"
 							v-bind="card"
 						>
 						</PlayingCard>
@@ -161,8 +160,9 @@ export default {
 
 <style scoped>
 .player-cards {
+	position: relative;
 	margin: 20px;
-	width: 100px; /* match card */
+	width: 110px; /* match card */
 	height: 140px; /* match card */
 	border: 1px dashed black;
 	text-align: center;
@@ -172,5 +172,10 @@ export default {
 
 .card {
 	position: absolute;
+}
+
+/* offset tiebreaker card */
+.card+.card {
+	left:5px;
 }
 </style>
