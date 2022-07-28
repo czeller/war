@@ -5,7 +5,7 @@ import { wargameStore } from '/src/store'
 export default {
 	components: {
     PlayingCard: require("./PlayingCard").default,
-		BattlePlayedCards: require("./BattlePlayedCards").default,
+		TieBreakerCardSummary: require("./TieBreakerCardSummary").default,
   },
 
 	props: {
@@ -126,7 +126,7 @@ export default {
 			</div>
 
 			<template v-if="wargameStore.battles.length > 1">
-				<BattlePlayedCards></BattlePlayedCards>
+				<TieBreakerCardSummary></TieBreakerCardSummary>
 			</template>
 		</div>
 
