@@ -73,7 +73,7 @@ export default {
 				});
 
 			//todo: is a stalemate possible if you end with a tiebreaker?
-			if (players[0].score != players[1].score) {
+			if (false && players[0].score != players[1].score) {
 				//we have a winner!
 				this.battleResults = "Player " + players[0].name + " won!"; //todo: show how many cards the player won?
 				this.wargameStore.endBattles(players[0].originalPlayerIndex);
@@ -99,14 +99,18 @@ export default {
 
 <template>
 	<div>
-		<div>
+		<div style="min-height:20px; text-align:center;">
 			{{battleResults}}
 		</div>
 
 		<div>
 			<div style="display:flex; justify-content:center;">
 				<div v-for="(player, index) in players" :key="index">
-					Player {{player.name}} play {{numberOfCardsRequired - player.cards.length}} card(s)!
+					<div style="min-height:20px; text-align:center;">
+						<template v-if="numberOfCardsRequired - player.cards.length > 0">
+							Player {{player.name}} play {{numberOfCardsRequired - player.cards.length}} card{{numberOfCardsRequired - player.cards.length > 1 ? 's' : ''}}!
+						</template>
+					</div>
 
 					<div class="player-cards">
 						<PlayingCard
@@ -120,7 +124,6 @@ export default {
 				</div>
 			</div>
 
-			<!--todo if current battle is a tiebreaker, show cards from previous battles separately-->
 			<template v-if="wargameStore.battles.length > 1">
 				PLAYED CARDS...
 				<div style="display:flex;">
@@ -160,10 +163,11 @@ export default {
 
 <style scoped>
 .player-cards {
+	box-sizing: border-box;
 	position: relative;
 	margin: 20px;
-	width: 110px; /* match card */
-	height: 140px; /* match card */
+	width: 120px; /* match card */
+	height: 160px; /* match card */
 	border: 1px dashed black;
 	text-align: center;
 	display: flex;
@@ -171,11 +175,13 @@ export default {
 }
 
 .card {
+	top: 10px;
+	left: 10px;
 	position: absolute;
 }
 
 /* offset tiebreaker card */
 .card+.card {
-	left:5px;
+	left: 15px;
 }
 </style>
